@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-brand: 'Libre Franklin', 'Archivo', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    --font-display: 'Libre Franklin', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    --font-sans: 'Libre Franklin', 'Public Sans', system-ui, -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+    --brand-ink: #0b0b0f;
+    --brand-paper: #f4f4f2;
+    --brand-signal: #c4f500;
+    --brand-accent: #c4f500;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: #f8fafc;
+    color: #0f172a;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+  }
+}
+
+.font-brand {
+  font-family: var(--font-brand);
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-mono-tabular {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Keep keyboard focus visible aligned with brand signal. */
+:where(button, a, input, textarea, select):focus-visible {
+  outline: 2px solid #c4f500;
+  outline-offset: 3px;
+}

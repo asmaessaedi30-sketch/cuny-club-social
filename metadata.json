@@ -1,0 +1,10 @@
+{
+  "name": "CUNY SPS Club Social Hub",
+  "description": "Centralized, AI-powered social media management and institutional governance platform for CUNY SPS student organizations and the Office of Student Life.",
+  "requestFramePermissions": [
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
