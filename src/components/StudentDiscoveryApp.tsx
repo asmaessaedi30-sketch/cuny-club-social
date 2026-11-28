@@ -653,10 +653,11 @@ export function StudentDiscoveryApp({
                   <button
                     type="button"
                     onClick={onOpenRoleModal}
-                    className="hidden xl:inline-block text-[11px] font-bold text-slate-600 hover:text-slate-900 px-1 py-1"
-                    title="Switch role"
+                    className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-600 hover:text-slate-950 px-2 py-1 rounded-md hover:bg-slate-100 transition-colors cursor-pointer"
+                    title="Switch role or return to public student mode"
                   >
-                    {currentUser.name}
+                    <span className="truncate max-w-[120px]">{currentUser.name}</span>
+                    <span className="text-[10px] text-indigo-600 font-semibold hidden sm:inline">(Switch Role)</span>
                   </button>
                 </div>
               )}
@@ -1807,7 +1808,13 @@ export function StudentDiscoveryApp({
                               ) : null}
                             </div>
                             <div className="text-[11px] text-indigo-600 font-medium">{member.role}</div>
-                            <div className="text-[10px] text-slate-500">{member.major}</div>
+                            <a
+                              href={`mailto:${member.email}`}
+                              className="text-[11px] text-slate-500 hover:text-indigo-600 hover:underline flex items-center gap-1 mt-0.5"
+                            >
+                              <Mail className="w-3 h-3 text-slate-400" />
+                              <span>{member.email}</span>
+                            </a>
                           </div>
                         </div>
                       </div>

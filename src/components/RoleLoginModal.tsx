@@ -301,26 +301,28 @@ export function RoleLoginModal({
                   </div>
                 </div>
 
-                <div className="space-y-2 pt-1">
-                  <span className="text-[11px] font-semibold text-slate-700 flex items-center gap-1">
-                    <Users className="w-3.5 h-3.5" /> Authenticated Club Members
-                  </span>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                    {memberPersonas.map((persona) => (
-                      <button
-                        key={persona.userId}
-                        onClick={() => handleSelectPersona(persona)}
-                        className="text-left p-2.5 rounded-xl border border-slate-200 hover:border-slate-400 bg-white hover:bg-slate-50 transition-all flex items-center justify-between group"
-                      >
-                        <div>
-                          <div className="text-xs font-bold text-slate-900">{persona.name}</div>
-                          <div className="text-[10px] text-slate-500">{persona.title} • {persona.departmentOrMajor}</div>
-                        </div>
-                        <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-slate-600 transition-all" />
-                      </button>
-                    ))}
+                {memberPersonas.length > 0 && (
+                  <div className="space-y-2 pt-1">
+                    <span className="text-[11px] font-semibold text-slate-700 flex items-center gap-1">
+                      <Users className="w-3.5 h-3.5" /> Authenticated Club Members
+                    </span>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                      {memberPersonas.map((persona) => (
+                        <button
+                          key={persona.userId}
+                          onClick={() => handleSelectPersona(persona)}
+                          className="text-left p-2.5 rounded-xl border border-slate-200 hover:border-slate-400 bg-white hover:bg-slate-50 transition-all flex items-center justify-between group"
+                        >
+                          <div>
+                            <div className="text-xs font-bold text-slate-900">{persona.name}</div>
+                            <div className="text-[10px] text-slate-500">{persona.title}</div>
+                          </div>
+                          <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-slate-600 transition-all" />
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
 
               {/* Custom CUNY Email Login Form */}

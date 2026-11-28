@@ -123,7 +123,6 @@ export function AdminPortalView({
       !searchMemberQuery ||
       m.name.toLowerCase().includes(searchMemberQuery.toLowerCase()) ||
       m.email.toLowerCase().includes(searchMemberQuery.toLowerCase()) ||
-      m.major.toLowerCase().includes(searchMemberQuery.toLowerCase()) ||
       m.clubName.toLowerCase().includes(searchMemberQuery.toLowerCase());
     return matchClub && matchSearch;
   });
@@ -519,7 +518,7 @@ export function AdminPortalView({
                 <Search className="w-4 h-4 text-slate-400 absolute left-2.5 top-2" />
                 <input
                   type="text"
-                  placeholder="Search by name, email, or major..."
+                  placeholder="Search by name, email, or club..."
                   value={searchMemberQuery}
                   onChange={(e) => setSearchMemberQuery(e.target.value)}
                   className="pl-8 pr-3 py-1.5 rounded-lg border border-slate-300 text-xs w-64 focus:ring-2 focus:ring-blue-500 focus:outline-none"
@@ -535,16 +534,14 @@ export function AdminPortalView({
                     <th className="p-3">Student Name</th>
                     <th className="p-3">CUNY Email</th>
                     <th className="p-3">Club Organization</th>
-                    <th className="p-3">Academic Program / Major</th>
                     <th className="p-3">Role Designation</th>
-                    <th className="p-3">Date Joined</th>
                     <th className="p-3">Status</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 font-medium text-slate-800">
                   {displayedMembers.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="p-8 text-center text-slate-400 text-xs">
+                      <td colSpan={5} className="p-8 text-center text-slate-400 text-xs">
                         No members matching current criteria.
                       </td>
                     </tr>
@@ -558,7 +555,6 @@ export function AdminPortalView({
                           </a>
                         </td>
                         <td className="p-3 text-indigo-700">{m.clubName}</td>
-                        <td className="p-3 text-slate-600">{m.major}</td>
                         <td className="p-3">
                           <span
                             className={`px-2 py-0.5 rounded text-[10px] font-bold ${
@@ -570,7 +566,6 @@ export function AdminPortalView({
                             {m.role}
                           </span>
                         </td>
-                        <td className="p-3 text-slate-500">{m.joinedDate}</td>
                         <td className="p-3">
                           <span className="text-emerald-700 font-semibold flex items-center gap-1">
                             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>

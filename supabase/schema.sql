@@ -260,41 +260,36 @@ VALUES
     ('admin-elena', 'elena.vance@sps.cuny.edu', 'Dr. Elena Vance', 'ADMIN', 'Director of Student Life', 'Office of Student Life', NULL, TRUE, 'EV'),
 
     -- Layer 2: AI Club Executive Board
-    ('usr-ai-abdul', 'ABDUL.RAHMAN45@stu-mail.sps.cuny.edu', 'Abdul Rahman', 'LEADER', 'AI Club President', 'M.S. in Data Science', 'club-ai', FALSE, 'AR'),
-    ('usr-ai-mehreen', 'MEHREEN.GILLANI42@stu-mail.sps.cuny.edu', 'Mehreen Gillani', 'LEADER', 'AI Club Secretary', 'B.S. in Information Systems', 'club-ai', FALSE, 'MG'),
-    ('usr-ai-alina', 'alina.repin79@login.cuny.edu', 'Alina Repin', 'LEADER', 'AI Club Treasurer', 'B.S. in Information Systems', 'club-ai', FALSE, 'AR'),
+    ('usr-ai-abdul', 'ABDUL.RAHMAN45@stu-mail.sps.cuny.edu', 'Abdul Rahman', 'LEADER', 'AI Club President', 'CUNY SPS', 'club-ai', FALSE, 'AR'),
+    ('usr-ai-mehreen', 'MEHREEN.GILLANI42@stu-mail.sps.cuny.edu', 'Mehreen Gillani', 'LEADER', 'AI Club Secretary', 'CUNY SPS', 'club-ai', FALSE, 'MG'),
+    ('usr-ai-alina', 'alina.repin79@login.cuny.edu', 'Alina Repin', 'LEADER', 'AI Club Treasurer', 'CUNY SPS', 'club-ai', FALSE, 'AR'),
 
     -- Layer 2: MSA Executive Board
-    ('usr-msa-abdul', 'ABDUL.RAHMAN45@stu-mail.sps.cuny.edu', 'Abdul Rahman', 'LEADER', 'MSA President', 'M.S. in Data Science', 'club-msa', FALSE, 'AR'),
-    ('usr-msa-vasilah', 'Vasilah.Siddiqui42@login.cuny.edu', 'Vasilah Siddiqui', 'LEADER', 'MSA Vice President', 'B.A. in Psychology', 'club-msa', FALSE, 'VS'),
-    ('usr-msa-sarosh', 'SAROSH.KARIM45@login.cuny.edu', 'Sarosh Karim', 'LEADER', 'MSA Secretary', 'B.A. in Communication & Media', 'club-msa', FALSE, 'SK'),
-    ('usr-msa-mehreen', 'MEHREEN.GILLANI42@stu-mail.sps.cuny.edu', 'Mehreen Gillani', 'LEADER', 'MSA Treasurer', 'B.S. in Information Systems', 'club-msa', FALSE, 'MG'),
-    ('usr-msa-asma', 'ASMA.ESSAEDI89@stu-mail.sps.cuny.edu', 'Asma Essaedi', 'LEADER', 'Marketing Lead & Social Media Coordinator', 'B.S. in Information Systems', 'club-msa', FALSE, 'AE')
+    ('usr-msa-abdul', 'ABDUL.RAHMAN45@stu-mail.sps.cuny.edu', 'Abdul Rahman', 'LEADER', 'MSA President', 'CUNY SPS', 'club-msa', FALSE, 'AR'),
+    ('usr-msa-vasilah', 'Vasilah.Siddiqui42@login.cuny.edu', 'Vasilah Siddiqui', 'LEADER', 'MSA Vice President', 'CUNY SPS', 'club-msa', FALSE, 'VS'),
+    ('usr-msa-sarosh', 'SAROSH.KARIM45@login.cuny.edu', 'Sarosh Karim', 'LEADER', 'MSA Secretary', 'CUNY SPS', 'club-msa', FALSE, 'SK'),
+    ('usr-msa-mehreen', 'MEHREEN.GILLANI42@stu-mail.sps.cuny.edu', 'Mehreen Gillani', 'LEADER', 'MSA Treasurer', 'CUNY SPS', 'club-msa', FALSE, 'MG'),
+    ('usr-msa-asma', 'ASMA.ESSAEDI89@stu-mail.sps.cuny.edu', 'Asma Essaedi', 'LEADER', 'Marketing Lead & Social Media Coordinator', 'CUNY SPS', 'club-msa', FALSE, 'AE')
 ON CONFLICT (id) DO UPDATE SET
     email = EXCLUDED.email,
     name = EXCLUDED.name,
     role_layer = EXCLUDED.role_layer,
     title = EXCLUDED.title;
 
--- Real Club Memberships: AI Club & MSA Rosters
-INSERT INTO public.club_memberships (id, club_id, club_name, name, email, major, role, joined_date, status)
+-- Real Club Memberships: AI Club & MSA Verified Rosters (Zero Fabricated Records)
+INSERT INTO public.club_memberships (id, club_id, club_name, name, email, role, status)
 VALUES
-    -- AI Club Roster
-    ('mem-ai-001', 'club-ai', 'AI Club', 'Abdul Rahman', 'ABDUL.RAHMAN45@stu-mail.sps.cuny.edu', 'M.S. in Data Science', 'President / Co-Chair', '2025-09-01', 'Active'),
-    ('mem-ai-002', 'club-ai', 'AI Club', 'Mehreen Gillani', 'MEHREEN.GILLANI42@stu-mail.sps.cuny.edu', 'B.S. in Information Systems', 'Secretary', '2025-09-15', 'Active'),
-    ('mem-ai-003', 'club-ai', 'AI Club', 'Alina Repin', 'alina.repin79@login.cuny.edu', 'B.S. in Information Systems', 'Treasurer', '2025-10-01', 'Active'),
-    ('mem-ai-004', 'club-ai', 'AI Club', 'Prof. Jordan Reyes', 'jordan.reyes@sps.cuny.edu', 'Faculty of Computing & Information', 'Faculty Advisor', '2025-08-15', 'Active'),
-    ('mem-ai-005', 'club-ai', 'AI Club', 'Sofia Patel', 'sofia.patel@spsmail.cuny.edu', 'B.A. in Communication & Media', 'Active Member', '2025-10-04', 'Active'),
-    ('mem-ai-006', 'club-ai', 'AI Club', 'Noah Kim', 'noah.kim@spsmail.cuny.edu', 'B.S. in Information Systems', 'Active Member', '2025-09-20', 'Active'),
+    -- AI Club Verified Executive Board
+    ('mem-ai-001', 'club-ai', 'AI Club', 'Abdul Rahman', 'ABDUL.RAHMAN45@stu-mail.sps.cuny.edu', 'President / Co-Chair', 'Active'),
+    ('mem-ai-002', 'club-ai', 'AI Club', 'Mehreen Gillani', 'MEHREEN.GILLANI42@stu-mail.sps.cuny.edu', 'Secretary', 'Active'),
+    ('mem-ai-003', 'club-ai', 'AI Club', 'Alina Repin', 'alina.repin79@login.cuny.edu', 'Treasurer', 'Active'),
 
-    -- MSA Roster
-    ('mem-msa-001', 'club-msa', 'Muslim Students Association (MSA)', 'Abdul Rahman', 'ABDUL.RAHMAN45@stu-mail.sps.cuny.edu', 'M.S. in Data Science', 'President / Co-Chair', '2025-08-20', 'Active'),
-    ('mem-msa-002', 'club-msa', 'Muslim Students Association (MSA)', 'Vasilah Siddiqui', 'Vasilah.Siddiqui42@login.cuny.edu', 'B.A. in Psychology', 'Vice President', '2025-08-25', 'Active'),
-    ('mem-msa-003', 'club-msa', 'Muslim Students Association (MSA)', 'Sarosh Karim', 'SAROSH.KARIM45@login.cuny.edu', 'B.A. in Communication & Media', 'Secretary', '2025-09-01', 'Active'),
-    ('mem-msa-004', 'club-msa', 'Muslim Students Association (MSA)', 'Mehreen Gillani', 'MEHREEN.GILLANI42@stu-mail.sps.cuny.edu', 'B.S. in Information Systems', 'Treasurer', '2025-09-05', 'Active'),
-    ('mem-msa-005', 'club-msa', 'Muslim Students Association (MSA)', 'Asma Essaedi', 'ASMA.ESSAEDI89@stu-mail.sps.cuny.edu', 'B.S. in Information Systems', 'Social Media Lead', '2025-09-10', 'Active'),
-    ('mem-msa-006', 'club-msa', 'Muslim Students Association (MSA)', 'Fatima El-Sayed', 'fatima.elsayed@spsmail.cuny.edu', 'B.A. in Psychology', 'Active Member', '2025-11-01', 'Active'),
-    ('mem-msa-007', 'club-msa', 'Muslim Students Association (MSA)', 'Prof. Tariq Siddiqui', 'tariq.siddiqui@sps.cuny.edu', 'Faculty Advisor', 'Faculty Advisor', '2025-08-10', 'Active')
+    -- MSA Verified Executive Board
+    ('mem-msa-001', 'club-msa', 'Muslim Students Association (MSA)', 'Abdul Rahman', 'ABDUL.RAHMAN45@stu-mail.sps.cuny.edu', 'President / Co-Chair', 'Active'),
+    ('mem-msa-002', 'club-msa', 'Muslim Students Association (MSA)', 'Vasilah Siddiqui', 'Vasilah.Siddiqui42@login.cuny.edu', 'Vice President', 'Active'),
+    ('mem-msa-003', 'club-msa', 'Muslim Students Association (MSA)', 'Sarosh Karim', 'SAROSH.KARIM45@login.cuny.edu', 'Secretary', 'Active'),
+    ('mem-msa-004', 'club-msa', 'Muslim Students Association (MSA)', 'Mehreen Gillani', 'MEHREEN.GILLANI42@stu-mail.sps.cuny.edu', 'Treasurer', 'Active'),
+    ('mem-msa-005', 'club-msa', 'Muslim Students Association (MSA)', 'Asma Essaedi', 'ASMA.ESSAEDI89@stu-mail.sps.cuny.edu', 'Social Media Lead', 'Active')
 ON CONFLICT (id) DO UPDATE SET
     name = EXCLUDED.name,
     email = EXCLUDED.email,
