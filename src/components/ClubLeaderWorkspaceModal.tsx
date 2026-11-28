@@ -468,7 +468,7 @@ export function ClubLeaderWorkspaceModal({
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-200">
                 <div>
                   <h4 className="text-base font-bold text-slate-900">Club Leader &rarr; Student Association Budget Requests</h4>
-                  <p className="text-xs text-slate-500">Submit formal budget allocation requests directly to Parsh, Anthony, and Vanessa.</p>
+                  <p className="text-xs text-slate-500">Submit formal budget allocation requests directly to Parsh and Anthony.</p>
                 </div>
                 {isLeader && (
                   <button

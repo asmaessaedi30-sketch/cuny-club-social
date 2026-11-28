@@ -3,7 +3,7 @@
  * Supports the 3 distinct access layers:
  *   - Layer 1: General Students / Public Visitors (No login required)
  *   - Layer 2: Club Members & Club Leaders / Executives (CUNY email login)
- *   - Layer 3: Student Association & Platform Admins (Parsh, Anthony, Vanessa)
+ *   - Layer 3: Student Association & Platform Admins (Parsh, Anthony)
  */
 
 import {
@@ -120,26 +120,6 @@ export const DEFAULT_PERSONAS: EcosystemUser[] = [
     departmentOrMajor: 'Office of Student Life',
     isPlatformAdmin: true,
     avatarInitials: 'AS',
-  },
-  {
-    userId: 'admin-vanessa',
-    name: 'Vanessa',
-    email: 'vanessa.admin@sps.cuny.edu',
-    roleLayer: 'ADMIN',
-    title: 'Student Association Treasurer & Governance Lead',
-    departmentOrMajor: 'Student Life Oversight',
-    isPlatformAdmin: true,
-    avatarInitials: 'VA',
-  },
-  {
-    userId: 'admin-elena',
-    name: 'Dr. Elena Vance',
-    email: 'elena.vance@sps.cuny.edu',
-    roleLayer: 'ADMIN',
-    title: 'Director of Student Life',
-    departmentOrMajor: 'Office of Student Life',
-    isPlatformAdmin: true,
-    avatarInitials: 'EV',
   },
 
   // Layer 2: Club Leaders / Executives - AI Club
@@ -320,11 +300,11 @@ const INITIAL_BUDGET_REQUESTS: BudgetRequest[] = [];
 const INITIAL_COLLAB_REQUESTS: CollaborationRequest[] = [];
 
 const STORAGE_KEYS = {
-  CURRENT_USER: 'cuny_hub_current_user_v4',
-  MEMBERS: 'cuny_hub_members_v4',
-  JOIN_REQUESTS: 'cuny_hub_join_requests_v4',
-  BUDGET_REQUESTS: 'cuny_hub_budget_requests_v4',
-  COLLAB_REQUESTS: 'cuny_hub_collab_requests_v4',
+  CURRENT_USER: 'cuny_hub_current_user_v5',
+  MEMBERS: 'cuny_hub_members_v5',
+  JOIN_REQUESTS: 'cuny_hub_join_requests_v5',
+  BUDGET_REQUESTS: 'cuny_hub_budget_requests_v5',
+  COLLAB_REQUESTS: 'cuny_hub_collab_requests_v5',
 };
 
 class EcosystemStore {

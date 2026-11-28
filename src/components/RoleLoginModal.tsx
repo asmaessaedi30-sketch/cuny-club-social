@@ -367,7 +367,7 @@ export function RoleLoginModal({
                   <div className="text-xs text-slate-700 space-y-1">
                     <h4 className="font-bold text-slate-900 text-sm">Layer 3: Student Association &amp; Platform Admin Portal</h4>
                     <p>
-                      Dedicated administrative governance portal for <strong>Parsh, Anthony, Vanessa</strong>, and Student Life Leadership. Review &amp; approve/reject club requests (budget increases, event approvals), pull member rosters &amp; email lists, and generate analytical/compliance reports for CUNY Central.
+                      Dedicated administrative governance portal for <strong>Parsh and Anthony</strong>. Review &amp; approve/reject club requests (budget increases, event approvals), pull member rosters &amp; email lists, and generate analytical/compliance reports for CUNY Central.
                     </p>
                   </div>
                 </div>

@@ -5,7 +5,7 @@
 -- Supports 3-Layer Access Control:
 --   Layer 1: General Students & Public Visitors (Browse clubs, view events, submit join requests)
 --   Layer 2: Club Members & Club Leaders / Executives (Member directories, manage events, review join requests, submit budget & collab requests)
---   Layer 3: Student Association & Platform Admins (Parsh, Anthony, Vanessa - Governance, approvals, CSV reports)
+--   Layer 3: Student Association & Platform Admins (Parsh, Anthony - Governance, approvals, CSV reports)
 -- ==============================================================================
 
 -- 1. CLUBS CATALOG TABLE
@@ -256,8 +256,6 @@ VALUES
     -- Layer 3: Platform Admins
     ('admin-parsh', 'Parshotam.Lal@cuny.edu', 'Parshotam Lal (Parsh)', 'ADMIN', 'Student Association Co-Chair / Platform Admin', 'Student Association Executive Board', NULL, TRUE, 'PL'),
     ('admin-anthony', 'anthony.sweeney@cuny.edu', 'Anthony Sweeney', 'ADMIN', 'Student Life Systems Admin', 'Office of Student Life', NULL, TRUE, 'AS'),
-    ('admin-vanessa', 'vanessa.admin@sps.cuny.edu', 'Vanessa', 'ADMIN', 'Student Association Treasurer & Governance Lead', 'Student Life Oversight', NULL, TRUE, 'VA'),
-    ('admin-elena', 'elena.vance@sps.cuny.edu', 'Dr. Elena Vance', 'ADMIN', 'Director of Student Life', 'Office of Student Life', NULL, TRUE, 'EV'),
 
     -- Layer 2: AI Club Executive Board
     ('usr-ai-abdul', 'ABDUL.RAHMAN45@stu-mail.sps.cuny.edu', 'Abdul Rahman', 'LEADER', 'AI Club President', 'CUNY SPS', 'club-ai', FALSE, 'AR'),
@@ -295,26 +293,5 @@ ON CONFLICT (id) DO UPDATE SET
     email = EXCLUDED.email,
     role = EXCLUDED.role;
 
--- Seed Join Requests
-INSERT INTO public.join_requests (id, club_id, club_name, student_name, student_email, major, interest_reason, submitted_at, status, reviewed_by, reviewed_at)
-VALUES
-    ('req-join-101', 'club-ai', 'AI Club', 'Daniel Hernandez', 'daniel.hernandez@spsmail.cuny.edu', 'B.S. in Information Systems', 'Interested in hands-on LLM projects and collaborating with fellow SPS students on AI tools.', '2026-11-26T14:30:00Z', 'Pending', NULL, NULL),
-    ('req-join-102', 'club-ai', 'AI Club', 'Emily Watson', 'emily.watson@spsmail.cuny.edu', 'M.S. in Data Science', 'Would love to join the machine learning study groups and attend the industry speaker panels.', '2026-11-27T09:15:00Z', 'Pending', NULL, NULL),
-    ('req-join-103', 'club-msa', 'Muslim Students Association (MSA)', 'Bilal Khan', 'bilal.khan@spsmail.cuny.edu', 'B.S. in Health Services Admin', 'Seeking community, study sessions, and volunteering with fellow students.', '2026-11-25T19:00:00Z', 'Approved', 'Abdul Rahman (MSA President)', '2026-11-26T10:00:00Z'),
-    ('req-join-104', 'club-book', 'Book Club', 'Sarah Jenkins', 'sarah.jenkins@spsmail.cuny.edu', 'B.A. in Communication', 'Love reading contemporary fiction and discussing diverse books monthly.', '2026-11-27T16:20:00Z', 'Pending', NULL, NULL)
-ON CONFLICT (id) DO NOTHING;
-
--- Seed Budget Requests
-INSERT INTO public.budget_requests (id, club_id, club_name, submitted_by, submitter_email, title, amount, category, justification, intended_event_date, submitted_at, status, admin_decision_notes, reviewed_by, reviewed_at)
-VALUES
-    ('bgt-201', 'club-ai', 'AI Club', 'Abdul Rahman', 'ABDUL.RAHMAN45@stu-mail.sps.cuny.edu', 'Spring 2027 AI Hackathon Cloud GPU Credits', 450.00, 'Software & Compute Licenses', 'Provide 30 participating student teams with cloud compute tokens during the 48-hour student hackathon.', '2027-02-20', '2026-11-24T11:00:00Z', 'Under Review', 'Reviewing quote from cloud provider; aligns with institutional STEM initiative.', 'Parshotam Lal (Student Association Admin)', '2026-11-25T14:00:00Z'),
-    ('bgt-202', 'club-book', 'Book Club', 'Maya Rodriguez', 'maya.rodriguez@spsmail.cuny.edu', 'Visiting Author Honorarium - NYC Literary Voices', 300.00, 'Guest Speaker Honorarium', 'Honorarium for guest author hosting a virtual fireside reading and Q&A with CUNY students.', '2026-12-10', '2026-11-22T15:45:00Z', 'Approved', 'Approved in full. Funds encumbered under Student Life Speaker Fund.', 'Vanessa (SA Treasurer)', '2026-11-23T16:30:00Z'),
-    ('bgt-203', 'club-msa', 'Muslim Students Association (MSA)', 'Mehreen Gillani', 'MEHREEN.GILLANI42@stu-mail.sps.cuny.edu', 'Campus Iftar & Inter-Club Dialogue Refreshments', 500.00, 'Event Supplies & Refreshments', 'Halal catering and community meal for open campus dinner welcoming all SPS students.', '2027-03-15', '2026-11-25T18:10:00Z', 'Submitted', NULL, NULL, NULL)
-ON CONFLICT (id) DO NOTHING;
-
--- Seed Cross-Club Collaboration Requests
-INSERT INTO public.collaboration_requests (id, initiating_club_id, initiating_club_name, target_club_id, target_club_name, submitted_by, submitter_email, event_title, proposed_date, proposed_format, pitch_description, expected_attendees, submitted_at, status, response_notes, responded_by, responded_at)
-VALUES
-    ('collab-301', 'club-ai', 'AI Club', 'club-book', 'Book Club', 'Abdul Rahman', 'ABDUL.RAHMAN45@stu-mail.sps.cuny.edu', 'AI in Modern Storytelling: Speculative Fiction & Ethics Workshop', '2026-12-14', 'Virtual (Zoom)', 'A joint panel co-hosted by AI Club and Book Club exploring how sci-fi authors conceptualize machine intelligence, followed by an open student discussion on AI ethics in creative writing.', 45, '2026-11-26T10:15:00Z', 'Pending', NULL, NULL, NULL),
-    ('collab-302', 'club-pride', 'Pride Club', 'club-disability', 'Disability & Access Student Coalition', 'Jordan Taylor', 'jordan.taylor@spsmail.cuny.edu', 'Intersectionality, Neurodiversity & Community Spaces', '2026-12-18', 'Hybrid', 'Joint interactive roundtable discussing accessible campus events, neuroinclusive spaces, and mutual support networks.', 35, '2026-11-23T14:00:00Z', 'Accepted', 'Excited to co-host! We will assist with ASL and captioning coordination.', 'Access Coalition Co-Lead', '2026-11-24T12:00:00Z')
-ON CONFLICT (id) DO NOTHING;
+-- Dynamic tables start clean without dummy requests
+-- Records are populated directly as students and leaders submit requests in the app.

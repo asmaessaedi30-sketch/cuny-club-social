@@ -241,7 +241,7 @@ export function AdminClubsView({ clubs, onRefresh, onOpenClubWorkspace }: AdminC
                 required
                 value={facultyAdvisor}
                 onChange={(e) => setFacultyAdvisor(e.target.value)}
-                placeholder="e.g., Dr. Elena Morales"
+                placeholder="e.g., Prof. Alex Morgan"
                 className="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:border-[#004B87]"
               />
             </div>
