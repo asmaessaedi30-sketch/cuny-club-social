@@ -299,12 +299,37 @@ const INITIAL_JOIN_REQUESTS: JoinClubRequest[] = [];
 const INITIAL_BUDGET_REQUESTS: BudgetRequest[] = [];
 const INITIAL_COLLAB_REQUESTS: CollaborationRequest[] = [];
 
+/**
+ * Find all matching personas for an email (case-insensitive & trimmed).
+ * If a leader has multiple roles (e.g. Abdul Rahman in AI Club and MSA), returns all matching personas.
+ */
+export function findPersonasByEmail(email: string): EcosystemUser[] {
+  if (!email) return [];
+  const normalized = email.trim().toLowerCase();
+  return DEFAULT_PERSONAS.filter((p) => p.email.trim().toLowerCase() === normalized);
+}
+
+/**
+ * Validates whether an email belongs to CUNY SPS / CUNY identity system
+ */
+export function isCunyEmailAddress(email: string): boolean {
+  if (!email || !email.includes('@')) return false;
+  const domain = email.trim().toLowerCase().split('@')[1];
+  return (
+    domain === 'login.cuny.edu' ||
+    domain === 'stu-mail.sps.cuny.edu' ||
+    domain === 'spsmail.cuny.edu' ||
+    domain === 'cuny.edu' ||
+    domain.endsWith('.cuny.edu')
+  );
+}
+
 const STORAGE_KEYS = {
-  CURRENT_USER: 'cuny_hub_current_user_v5',
-  MEMBERS: 'cuny_hub_members_v5',
-  JOIN_REQUESTS: 'cuny_hub_join_requests_v5',
-  BUDGET_REQUESTS: 'cuny_hub_budget_requests_v5',
-  COLLAB_REQUESTS: 'cuny_hub_collab_requests_v5',
+  CURRENT_USER: 'cuny_hub_current_user_v6',
+  MEMBERS: 'cuny_hub_members_v6',
+  JOIN_REQUESTS: 'cuny_hub_join_requests_v6',
+  BUDGET_REQUESTS: 'cuny_hub_budget_requests_v6',
+  COLLAB_REQUESTS: 'cuny_hub_collab_requests_v6',
 };
 
 class EcosystemStore {

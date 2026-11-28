@@ -83,6 +83,12 @@ export function ClubLeaderWorkspaceModal({
   };
 
   useEffect(() => {
+    if (currentUser.associatedClubId) {
+      setActiveClubId(currentUser.associatedClubId);
+    }
+  }, [currentUser.associatedClubId, isOpen]);
+
+  useEffect(() => {
     refreshData();
     const unsubscribe = ecosystemStore.subscribe(() => {
       refreshData();

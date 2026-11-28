@@ -142,6 +142,20 @@ export function StudentDiscoveryApp({
     return ecosystemStore.subscribe(updateCount);
   }, [currentUser]);
 
+  useEffect(() => {
+    if (currentUser) {
+      if (currentUser.roleLayer === 'LEADER') {
+        setCalendarToast(`Authenticated via CUNY SSO (login.cuny.edu) as ${currentUser.name} (${currentUser.title}). Executive board permissions enabled.`);
+        const timer = setTimeout(() => setCalendarToast(null), 5000);
+        return () => clearTimeout(timer);
+      } else if (currentUser.roleLayer === 'ADMIN') {
+        setCalendarToast(`Authenticated via CUNY SSO as ${currentUser.name}. Student Association Admin permissions enabled.`);
+        const timer = setTimeout(() => setCalendarToast(null), 5000);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [currentUser]);
+
   // Search & Filtering
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
