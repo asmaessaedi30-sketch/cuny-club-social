@@ -17,7 +17,8 @@ import {
   Mail,
   Award,
   Sparkles,
-  ExternalLink
+  ExternalLink,
+  Database
 } from 'lucide-react';
 import {
   ecosystemStore,
@@ -170,11 +171,20 @@ export function ClubLeaderWorkspaceModal({
 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <div className="flex items-center gap-2 mb-1.5">
+              <div className="flex flex-wrap items-center gap-2 mb-1.5">
                 <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 flex items-center gap-1">
                   <Award className="w-3 h-3" />
                   Layer 2: {isLeader ? 'Club Executive Workspace' : 'Authenticated Member Portal'}
                 </span>
+                {ecosystemStore.isCloudSyncActive() ? (
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 flex items-center gap-1">
+                    <Database className="w-3 h-3 text-emerald-400 animate-pulse" /> Supabase Realtime
+                  </span>
+                ) : (
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-500/20 text-amber-300 border border-amber-400/30 flex items-center gap-1">
+                    <Database className="w-3 h-3 text-amber-400" /> Offline / Local Storage
+                  </span>
+                )}
                 <span className="text-xs text-slate-400">User: {currentUser.name} ({currentUser.title})</span>
               </div>
               <h2 className="text-xl sm:text-2xl font-bold flex items-center gap-2">

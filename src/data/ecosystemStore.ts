@@ -6,6 +6,19 @@
  *   - Layer 3: Student Association & Platform Admins (Parsh, Anthony, Vanessa)
  */
 
+import {
+  isSupabaseConfigured,
+  fetchJoinRequestsFromSupabase,
+  upsertJoinRequestToSupabase,
+  fetchBudgetRequestsFromSupabase,
+  upsertBudgetRequestToSupabase,
+  fetchCollabRequestsFromSupabase,
+  upsertCollabRequestToSupabase,
+  fetchMembersFromSupabase,
+  upsertMemberToSupabase,
+  subscribeToRealtimeEcosystem,
+} from '../lib/supabaseClient';
+
 export type UserRoleLayer = 'GUEST' | 'MEMBER' | 'LEADER' | 'ADMIN';
 
 export interface EcosystemUser {
@@ -90,23 +103,23 @@ export const DEFAULT_PERSONAS: EcosystemUser[] = [
   // Layer 3: Student Association & Platform Admins
   {
     userId: 'admin-parsh',
-    name: 'Parsh',
-    email: 'parsh.admin@sps.cuny.edu',
+    name: 'Parshotam Lal (Parsh)',
+    email: 'Parshotam.Lal@cuny.edu',
     roleLayer: 'ADMIN',
     title: 'Student Association Co-Chair / Platform Admin',
     departmentOrMajor: 'Student Association Executive Board',
     isPlatformAdmin: true,
-    avatarInitials: 'PA',
+    avatarInitials: 'PL',
   },
   {
     userId: 'admin-anthony',
-    name: 'Anthony',
-    email: 'anthony.admin@sps.cuny.edu',
+    name: 'Anthony Sweeney',
+    email: 'anthony.sweeney@cuny.edu',
     roleLayer: 'ADMIN',
     title: 'Student Life Systems Admin',
     departmentOrMajor: 'Office of Student Life',
     isPlatformAdmin: true,
-    avatarInitials: 'AN',
+    avatarInitials: 'AS',
   },
   {
     userId: 'admin-vanessa',
@@ -129,39 +142,96 @@ export const DEFAULT_PERSONAS: EcosystemUser[] = [
     avatarInitials: 'EV',
   },
 
-  // Layer 2: Club Leaders / Executives
+  // Layer 2: Club Leaders / Executives - AI Club
   {
-    userId: 'lead-aisha',
-    name: 'Aisha Rahman',
-    email: 'aisha.rahman@spsmail.cuny.edu',
+    userId: 'lead-ai-abdul',
+    name: 'Abdul Rahman',
+    email: 'ABDUL.RAHMAN45@stu-mail.sps.cuny.edu',
     roleLayer: 'LEADER',
-    title: 'AI Club Co-Chair',
+    title: 'AI Club President',
     departmentOrMajor: 'M.S. in Data Science',
     associatedClubId: 'club-ai',
     associatedClubName: 'AI Club',
     avatarInitials: 'AR',
   },
   {
-    userId: 'lead-zainab',
-    name: 'Zainab Siddiqui',
-    email: 'zainab.siddiqui@spsmail.cuny.edu',
+    userId: 'lead-ai-mehreen',
+    name: 'Mehreen Gillani',
+    email: 'MEHREEN.GILLANI42@stu-mail.sps.cuny.edu',
     roleLayer: 'LEADER',
-    title: 'MSA President',
-    departmentOrMajor: 'B.A. in Sociology',
-    associatedClubId: 'club-msa',
-    associatedClubName: 'Muslim Students Association (MSA)',
-    avatarInitials: 'ZS',
-  },
-  {
-    userId: 'lead-devon',
-    name: 'Devon Brooks',
-    email: 'devon.brooks@spsmail.cuny.edu',
-    roleLayer: 'LEADER',
-    title: 'Social Media & Communications Officer',
+    title: 'AI Club Secretary',
     departmentOrMajor: 'B.S. in Information Systems',
     associatedClubId: 'club-ai',
     associatedClubName: 'AI Club',
-    avatarInitials: 'DB',
+    avatarInitials: 'MG',
+  },
+  {
+    userId: 'lead-ai-alina',
+    name: 'Alina Repin',
+    email: 'alina.repin79@login.cuny.edu',
+    roleLayer: 'LEADER',
+    title: 'AI Club Treasurer',
+    departmentOrMajor: 'B.S. in Information Systems',
+    associatedClubId: 'club-ai',
+    associatedClubName: 'AI Club',
+    avatarInitials: 'AR',
+  },
+
+  // Layer 2: Club Leaders / Executives - MSA
+  {
+    userId: 'lead-msa-abdul',
+    name: 'Abdul Rahman',
+    email: 'ABDUL.RAHMAN45@stu-mail.sps.cuny.edu',
+    roleLayer: 'LEADER',
+    title: 'MSA President',
+    departmentOrMajor: 'M.S. in Data Science',
+    associatedClubId: 'club-msa',
+    associatedClubName: 'Muslim Students Association (MSA)',
+    avatarInitials: 'AR',
+  },
+  {
+    userId: 'lead-msa-vasilah',
+    name: 'Vasilah Siddiqui',
+    email: 'Vasilah.Siddiqui42@login.cuny.edu',
+    roleLayer: 'LEADER',
+    title: 'MSA Vice President',
+    departmentOrMajor: 'B.A. in Psychology',
+    associatedClubId: 'club-msa',
+    associatedClubName: 'Muslim Students Association (MSA)',
+    avatarInitials: 'VS',
+  },
+  {
+    userId: 'lead-msa-sarosh',
+    name: 'Sarosh Karim',
+    email: 'SAROSH.KARIM45@login.cuny.edu',
+    roleLayer: 'LEADER',
+    title: 'MSA Secretary',
+    departmentOrMajor: 'B.A. in Communication & Media',
+    associatedClubId: 'club-msa',
+    associatedClubName: 'Muslim Students Association (MSA)',
+    avatarInitials: 'SK',
+  },
+  {
+    userId: 'lead-msa-mehreen',
+    name: 'Mehreen Gillani',
+    email: 'MEHREEN.GILLANI42@stu-mail.sps.cuny.edu',
+    roleLayer: 'LEADER',
+    title: 'MSA Treasurer',
+    departmentOrMajor: 'B.S. in Information Systems',
+    associatedClubId: 'club-msa',
+    associatedClubName: 'Muslim Students Association (MSA)',
+    avatarInitials: 'MG',
+  },
+  {
+    userId: 'lead-msa-asma',
+    name: 'Asma Essaedi',
+    email: 'ASMA.ESSAEDI89@stu-mail.sps.cuny.edu',
+    roleLayer: 'LEADER',
+    title: 'Marketing Lead & Social Media Coordinator',
+    departmentOrMajor: 'B.S. in Information Systems',
+    associatedClubId: 'club-msa',
+    associatedClubName: 'Muslim Students Association (MSA)',
+    avatarInitials: 'AE',
   },
 
   // Layer 2: Club Members
@@ -202,52 +272,42 @@ export const DEFAULT_PERSONAS: EcosystemUser[] = [
 
 // Preloaded Member Directory Rosters
 const INITIAL_MEMBERS: ClubMemberRecord[] = [
+  // AI Club Officers & Members
   {
-    memberId: 'mem-001',
+    memberId: 'mem-ai-001',
     clubId: 'club-ai',
     clubName: 'AI Club',
-    name: 'Aisha Rahman',
-    email: 'aisha.rahman@spsmail.cuny.edu',
+    name: 'Abdul Rahman',
+    email: 'ABDUL.RAHMAN45@stu-mail.sps.cuny.edu',
     major: 'M.S. in Data Science',
     role: 'President / Co-Chair',
     joinedDate: '2025-09-01',
     status: 'Active',
   },
   {
-    memberId: 'mem-002',
+    memberId: 'mem-ai-002',
     clubId: 'club-ai',
     clubName: 'AI Club',
-    name: 'Devon Brooks',
-    email: 'devon.brooks@spsmail.cuny.edu',
+    name: 'Mehreen Gillani',
+    email: 'MEHREEN.GILLANI42@stu-mail.sps.cuny.edu',
     major: 'B.S. in Information Systems',
-    role: 'Social Media Lead',
+    role: 'Secretary',
     joinedDate: '2025-09-15',
     status: 'Active',
   },
   {
-    memberId: 'mem-003',
+    memberId: 'mem-ai-003',
     clubId: 'club-ai',
     clubName: 'AI Club',
-    name: 'Sofia Patel',
-    email: 'sofia.patel@spsmail.cuny.edu',
-    major: 'B.A. in Communication & Media',
-    role: 'Active Member',
-    joinedDate: '2025-10-04',
-    status: 'Active',
-  },
-  {
-    memberId: 'mem-004',
-    clubId: 'club-ai',
-    clubName: 'AI Club',
-    name: 'Noah Kim',
-    email: 'noah.kim@spsmail.cuny.edu',
+    name: 'Alina Repin',
+    email: 'alina.repin79@login.cuny.edu',
     major: 'B.S. in Information Systems',
-    role: 'Vice President',
-    joinedDate: '2025-09-20',
+    role: 'Treasurer',
+    joinedDate: '2025-10-01',
     status: 'Active',
   },
   {
-    memberId: 'mem-005',
+    memberId: 'mem-ai-004',
     clubId: 'club-ai',
     clubName: 'AI Club',
     name: 'Prof. Jordan Reyes',
@@ -258,51 +318,86 @@ const INITIAL_MEMBERS: ClubMemberRecord[] = [
     status: 'Active',
   },
   {
-    memberId: 'mem-006',
+    memberId: 'mem-ai-005',
     clubId: 'club-ai',
     clubName: 'AI Club',
-    name: 'Marcus Sterling',
-    email: 'marcus.sterling@spsmail.cuny.edu',
-    major: 'M.S. in Data Science',
-    role: 'Treasurer',
-    joinedDate: '2025-10-12',
-    status: 'Active',
-  },
-  {
-    memberId: 'mem-007',
-    clubId: 'club-ai',
-    clubName: 'AI Club',
-    name: 'Chloe Zhang',
-    email: 'chloe.zhang@spsmail.cuny.edu',
-    major: 'M.S. in Cybersecurity',
+    name: 'Sofia Patel',
+    email: 'sofia.patel@spsmail.cuny.edu',
+    major: 'B.A. in Communication & Media',
     role: 'Active Member',
-    joinedDate: '2026-01-18',
+    joinedDate: '2025-10-04',
     status: 'Active',
   },
   {
-    memberId: 'mem-008',
+    memberId: 'mem-ai-006',
+    clubId: 'club-ai',
+    clubName: 'AI Club',
+    name: 'Noah Kim',
+    email: 'noah.kim@spsmail.cuny.edu',
+    major: 'B.S. in Information Systems',
+    role: 'Active Member',
+    joinedDate: '2025-09-20',
+    status: 'Active',
+  },
+
+  // MSA Officers & Members
+  {
+    memberId: 'mem-msa-001',
     clubId: 'club-msa',
     clubName: 'Muslim Students Association (MSA)',
-    name: 'Zainab Siddiqui',
-    email: 'zainab.siddiqui@spsmail.cuny.edu',
-    major: 'B.A. in Sociology',
+    name: 'Abdul Rahman',
+    email: 'ABDUL.RAHMAN45@stu-mail.sps.cuny.edu',
+    major: 'M.S. in Data Science',
     role: 'President / Co-Chair',
     joinedDate: '2025-08-20',
     status: 'Active',
   },
   {
-    memberId: 'mem-009',
+    memberId: 'mem-msa-002',
     clubId: 'club-msa',
     clubName: 'Muslim Students Association (MSA)',
-    name: 'Tariq Al-Mansoor',
-    email: 'tariq.mansoor@spsmail.cuny.edu',
-    major: 'B.S. in Business',
+    name: 'Vasilah Siddiqui',
+    email: 'Vasilah.Siddiqui42@login.cuny.edu',
+    major: 'B.A. in Psychology',
     role: 'Vice President',
+    joinedDate: '2025-08-25',
+    status: 'Active',
+  },
+  {
+    memberId: 'mem-msa-003',
+    clubId: 'club-msa',
+    clubName: 'Muslim Students Association (MSA)',
+    name: 'Sarosh Karim',
+    email: 'SAROSH.KARIM45@login.cuny.edu',
+    major: 'B.A. in Communication & Media',
+    role: 'Secretary',
+    joinedDate: '2025-09-01',
+    status: 'Active',
+  },
+  {
+    memberId: 'mem-msa-004',
+    clubId: 'club-msa',
+    clubName: 'Muslim Students Association (MSA)',
+    name: 'Mehreen Gillani',
+    email: 'MEHREEN.GILLANI42@stu-mail.sps.cuny.edu',
+    major: 'B.S. in Information Systems',
+    role: 'Treasurer',
+    joinedDate: '2025-09-05',
+    status: 'Active',
+  },
+  {
+    memberId: 'mem-msa-005',
+    clubId: 'club-msa',
+    clubName: 'Muslim Students Association (MSA)',
+    name: 'Asma Essaedi',
+    email: 'ASMA.ESSAEDI89@stu-mail.sps.cuny.edu',
+    major: 'B.S. in Information Systems',
+    role: 'Social Media Lead',
     joinedDate: '2025-09-10',
     status: 'Active',
   },
   {
-    memberId: 'mem-010',
+    memberId: 'mem-msa-006',
     clubId: 'club-msa',
     clubName: 'Muslim Students Association (MSA)',
     name: 'Fatima El-Sayed',
@@ -312,6 +407,19 @@ const INITIAL_MEMBERS: ClubMemberRecord[] = [
     joinedDate: '2025-11-01',
     status: 'Active',
   },
+  {
+    memberId: 'mem-msa-007',
+    clubId: 'club-msa',
+    clubName: 'Muslim Students Association (MSA)',
+    name: 'Prof. Tariq Siddiqui',
+    email: 'tariq.siddiqui@sps.cuny.edu',
+    major: 'Faculty Advisor',
+    role: 'Faculty Advisor',
+    joinedDate: '2025-08-10',
+    status: 'Active',
+  },
+
+  // Other clubs
   {
     memberId: 'mem-011',
     clubId: 'club-book',
@@ -392,7 +500,7 @@ const INITIAL_JOIN_REQUESTS: JoinClubRequest[] = [
     interestReason: 'Seeking community, study sessions, and volunteering with fellow students.',
     submittedAt: '2026-11-25T19:00:00Z',
     status: 'Approved',
-    reviewedBy: 'Zainab Siddiqui (President)',
+    reviewedBy: 'Abdul Rahman (MSA President)',
     reviewedAt: '2026-11-26T10:00:00Z',
   },
   {
@@ -414,8 +522,8 @@ const INITIAL_BUDGET_REQUESTS: BudgetRequest[] = [
     id: 'bgt-201',
     clubId: 'club-ai',
     clubName: 'AI Club',
-    submittedBy: 'Aisha Rahman',
-    submitterEmail: 'aisha.rahman@spsmail.cuny.edu',
+    submittedBy: 'Abdul Rahman',
+    submitterEmail: 'ABDUL.RAHMAN45@stu-mail.sps.cuny.edu',
     title: 'Spring 2027 AI Hackathon Cloud GPU Credits',
     amount: 450,
     category: 'Software & Compute Licenses',
@@ -424,7 +532,7 @@ const INITIAL_BUDGET_REQUESTS: BudgetRequest[] = [
     submittedAt: '2026-11-24T11:00:00Z',
     status: 'Under Review',
     adminDecisionNotes: 'Reviewing quote from cloud provider; aligns with institutional STEM initiative.',
-    reviewedBy: 'Parsh (Student Association Admin)',
+    reviewedBy: 'Parshotam Lal (Student Association Admin)',
     reviewedAt: '2026-11-25T14:00:00Z',
   },
   {
@@ -448,8 +556,8 @@ const INITIAL_BUDGET_REQUESTS: BudgetRequest[] = [
     id: 'bgt-203',
     clubId: 'club-msa',
     clubName: 'Muslim Students Association (MSA)',
-    submittedBy: 'Zainab Siddiqui',
-    submitterEmail: 'zainab.siddiqui@spsmail.cuny.edu',
+    submittedBy: 'Mehreen Gillani',
+    submitterEmail: 'MEHREEN.GILLANI42@stu-mail.sps.cuny.edu',
     title: 'Campus Iftar & Inter-Club Dialogue Refreshments',
     amount: 500,
     category: 'Event Supplies & Refreshments',
@@ -468,8 +576,8 @@ const INITIAL_COLLAB_REQUESTS: CollaborationRequest[] = [
     initiatingClubName: 'AI Club',
     targetClubId: 'club-book',
     targetClubName: 'Book Club',
-    submittedBy: 'Aisha Rahman',
-    submitterEmail: 'aisha.rahman@spsmail.cuny.edu',
+    submittedBy: 'Abdul Rahman',
+    submitterEmail: 'ABDUL.RAHMAN45@stu-mail.sps.cuny.edu',
     eventTitle: 'AI in Modern Storytelling: Speculative Fiction & Ethics Workshop',
     proposedDate: '2026-12-14',
     proposedFormat: 'Virtual (Zoom)',
@@ -500,11 +608,11 @@ const INITIAL_COLLAB_REQUESTS: CollaborationRequest[] = [
 ];
 
 const STORAGE_KEYS = {
-  CURRENT_USER: 'cuny_hub_current_user_v2',
-  MEMBERS: 'cuny_hub_members_v2',
-  JOIN_REQUESTS: 'cuny_hub_join_requests_v2',
-  BUDGET_REQUESTS: 'cuny_hub_budget_requests_v2',
-  COLLAB_REQUESTS: 'cuny_hub_collab_requests_v2',
+  CURRENT_USER: 'cuny_hub_current_user_v3',
+  MEMBERS: 'cuny_hub_members_v3',
+  JOIN_REQUESTS: 'cuny_hub_join_requests_v3',
+  BUDGET_REQUESTS: 'cuny_hub_budget_requests_v3',
+  COLLAB_REQUESTS: 'cuny_hub_collab_requests_v3',
 };
 
 class EcosystemStore {
@@ -514,9 +622,70 @@ class EcosystemStore {
   private budgetRequests: BudgetRequest[] = INITIAL_BUDGET_REQUESTS;
   private collabRequests: CollaborationRequest[] = INITIAL_COLLAB_REQUESTS;
   private listeners: Set<() => void> = new Set();
+  private realtimeUnsubscribe: (() => void) | null = null;
+  private isSyncingWithCloud = false;
 
   constructor() {
     this.loadFromStorage();
+    if (typeof window !== 'undefined' && isSupabaseConfigured) {
+      this.initSupabaseSync();
+    }
+  }
+
+  public isCloudSyncActive(): boolean {
+    return isSupabaseConfigured;
+  }
+
+  public getIsSyncing(): boolean {
+    return this.isSyncingWithCloud;
+  }
+
+  private async initSupabaseSync() {
+    await this.syncFromSupabase();
+
+    if (this.realtimeUnsubscribe) {
+      this.realtimeUnsubscribe();
+    }
+
+    this.realtimeUnsubscribe = subscribeToRealtimeEcosystem((table, eventType, payload) => {
+      console.log(`[Supabase Realtime] Change on ${table} (${eventType}):`, payload);
+      this.syncFromSupabase();
+    });
+  }
+
+  public async syncFromSupabase() {
+    if (!isSupabaseConfigured) return;
+    this.isSyncingWithCloud = true;
+    this.notify();
+
+    try {
+      const [remoteJoins, remoteBudgets, remoteCollabs, remoteMembers] = await Promise.all([
+        fetchJoinRequestsFromSupabase(),
+        fetchBudgetRequestsFromSupabase(),
+        fetchCollabRequestsFromSupabase(),
+        fetchMembersFromSupabase(),
+      ]);
+
+      if (remoteJoins && remoteJoins.length > 0) {
+        this.joinRequests = remoteJoins;
+      }
+      if (remoteBudgets && remoteBudgets.length > 0) {
+        this.budgetRequests = remoteBudgets;
+      }
+      if (remoteCollabs && remoteCollabs.length > 0) {
+        this.collabRequests = remoteCollabs;
+      }
+      if (remoteMembers && remoteMembers.length > 0) {
+        this.members = remoteMembers;
+      }
+
+      this.saveToStorage();
+    } catch (err) {
+      console.warn('[Supabase Sync] Error during background synchronization:', err);
+    } finally {
+      this.isSyncingWithCloud = false;
+      this.notify();
+    }
   }
 
   private loadFromStorage() {
@@ -628,18 +797,25 @@ class EcosystemStore {
     };
     this.joinRequests = [newReq, ...this.joinRequests];
     this.saveToStorage();
+    if (isSupabaseConfigured) {
+      upsertJoinRequestToSupabase(newReq);
+    }
     return newReq;
   }
 
   public reviewJoinRequest(id: string, status: 'Approved' | 'Rejected', reviewerName: string) {
+    let targetUpdated: JoinClubRequest | undefined;
+    let newlyCreatedMember: ClubMemberRecord | undefined;
+
     this.joinRequests = this.joinRequests.map((r) => {
       if (r.id === id) {
-        return {
+        targetUpdated = {
           ...r,
           status,
           reviewedBy: reviewerName,
           reviewedAt: new Date().toISOString(),
         };
+        return targetUpdated;
       }
       return r;
     });
@@ -648,7 +824,7 @@ class EcosystemStore {
     if (status === 'Approved') {
       const targetReq = this.joinRequests.find((r) => r.id === id);
       if (targetReq && !this.members.some((m) => m.email.toLowerCase() === targetReq.studentEmail.toLowerCase() && m.clubId === targetReq.clubId)) {
-        const newMember: ClubMemberRecord = {
+        newlyCreatedMember = {
           memberId: `mem-${Date.now()}`,
           clubId: targetReq.clubId,
           clubName: targetReq.clubName,
@@ -659,11 +835,16 @@ class EcosystemStore {
           joinedDate: new Date().toISOString().split('T')[0],
           status: 'Active',
         };
-        this.members = [...this.members, newMember];
+        this.members = [...this.members, newlyCreatedMember];
       }
     }
 
     this.saveToStorage();
+
+    if (isSupabaseConfigured) {
+      if (targetUpdated) upsertJoinRequestToSupabase(targetUpdated);
+      if (newlyCreatedMember) upsertMemberToSupabase(newlyCreatedMember);
+    }
   }
 
   // Club Leader -> Admin Budget Requests
@@ -683,6 +864,9 @@ class EcosystemStore {
     };
     this.budgetRequests = [newReq, ...this.budgetRequests];
     this.saveToStorage();
+    if (isSupabaseConfigured) {
+      upsertBudgetRequestToSupabase(newReq);
+    }
     return newReq;
   }
 
@@ -692,19 +876,26 @@ class EcosystemStore {
     reviewerName: string,
     adminNotes?: string
   ) {
+    let targetUpdated: BudgetRequest | undefined;
+
     this.budgetRequests = this.budgetRequests.map((b) => {
       if (b.id === id) {
-        return {
+        targetUpdated = {
           ...b,
           status,
           adminDecisionNotes: adminNotes ?? b.adminDecisionNotes,
           reviewedBy: reviewerName,
           reviewedAt: new Date().toISOString(),
         };
+        return targetUpdated;
       }
       return b;
     });
     this.saveToStorage();
+
+    if (isSupabaseConfigured && targetUpdated) {
+      upsertBudgetRequestToSupabase(targetUpdated);
+    }
   }
 
   // Club Leader -> Other Clubs Collaboration Requests
@@ -728,6 +919,9 @@ class EcosystemStore {
     };
     this.collabRequests = [newReq, ...this.collabRequests];
     this.saveToStorage();
+    if (isSupabaseConfigured) {
+      upsertCollabRequestToSupabase(newReq);
+    }
     return newReq;
   }
 
@@ -737,19 +931,26 @@ class EcosystemStore {
     responderName: string,
     responseNotes?: string
   ) {
+    let targetUpdated: CollaborationRequest | undefined;
+
     this.collabRequests = this.collabRequests.map((c) => {
       if (c.id === id) {
-        return {
+        targetUpdated = {
           ...c,
           status,
           responseNotes: responseNotes ?? c.responseNotes,
           respondedBy: responderName,
           respondedAt: new Date().toISOString(),
         };
+        return targetUpdated;
       }
       return c;
     });
     this.saveToStorage();
+
+    if (isSupabaseConfigured && targetUpdated) {
+      upsertCollabRequestToSupabase(targetUpdated);
+    }
   }
 
   // Export Roster Data for CUNY Central Reporting

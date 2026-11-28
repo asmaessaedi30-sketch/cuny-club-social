@@ -4,6 +4,7 @@ import { campusDate, shiftCalendarDate } from './calendarDates';
 export const CUNY_SPS_CALENDAR_LINKS = {
   openlabStudentLife: 'https://openlab.sps.cuny.edu/groups/cuny-sps-student-life/events/',
   openlabCampus: 'https://openlab.sps.cuny.edu/events/',
+  openlabCalendar: 'https://openlab.sps.cuny.edu/groups/cuny-sps-student-life/events/',
   officialNewsEvents: 'https://sps.cuny.edu/news-events/events',
   academicCalendar: 'https://sps.cuny.edu/academics/academic-calendar',
   eventSubmissionForm: 'https://forms.office.com/pages/responsepage.aspx?id=s_BgbwZfCU6XFZiduozH2OUWoTTGNHdIl-sDDEQRP3xUNDgwSTVMSkVKRVMwS0s1WTlSQkQ1M0E0NC4u',

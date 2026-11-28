@@ -231,25 +231,73 @@ export function RoleLoginModal({
                   Quick-Select Club Personas:
                 </span>
 
-                <div className="space-y-2">
-                  <span className="text-[11px] font-semibold text-indigo-700 flex items-center gap-1">
-                    <Award className="w-3.5 h-3.5" /> Club Leaders / Executives (Elevated Permissions)
-                  </span>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                    {leaderPersonas.map((persona) => (
-                      <button
-                        key={persona.userId}
-                        onClick={() => handleSelectPersona(persona)}
-                        className="text-left p-3 rounded-xl border border-slate-200 hover:border-indigo-400 bg-white hover:bg-indigo-50/50 transition-all flex items-center justify-between group"
-                      >
-                        <div>
-                          <div className="text-xs font-bold text-slate-900 group-hover:text-indigo-900">{persona.name}</div>
-                          <div className="text-[11px] text-indigo-600 font-medium">{persona.title}</div>
-                          <div className="text-[10px] text-slate-500">{persona.associatedClubName}</div>
-                        </div>
-                        <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 transform group-hover:translate-x-0.5 transition-all" />
-                      </button>
-                    ))}
+                <div className="space-y-3">
+                  {/* AI Club Executive Board */}
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-bold text-indigo-700 flex items-center gap-1">
+                        <Award className="w-3.5 h-3.5 text-indigo-600" /> AI Club Executive Board
+                      </span>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 font-semibold">
+                        3 Officers
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                      {leaderPersonas
+                        .filter((p) => p.associatedClubId === 'club-ai')
+                        .map((persona) => (
+                          <button
+                            key={persona.userId}
+                            onClick={() => handleSelectPersona(persona)}
+                            className="text-left p-2.5 rounded-xl border border-indigo-100 hover:border-indigo-400 bg-white hover:bg-indigo-50/50 transition-all flex items-center justify-between group shadow-xs"
+                          >
+                            <div className="min-w-0 pr-1">
+                              <div className="text-xs font-bold text-slate-900 group-hover:text-indigo-900 truncate">
+                                {persona.name}
+                              </div>
+                              <div className="text-[11px] text-indigo-600 font-semibold truncate">
+                                {persona.title.replace('AI Club ', '')}
+                              </div>
+                              <div className="text-[10px] text-slate-500 truncate">{persona.email}</div>
+                            </div>
+                            <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-indigo-600 flex-shrink-0" />
+                          </button>
+                        ))}
+                    </div>
+                  </div>
+
+                  {/* MSA Executive Board */}
+                  <div className="space-y-1.5 pt-1">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-bold text-emerald-700 flex items-center gap-1">
+                        <Award className="w-3.5 h-3.5 text-emerald-600" /> MSA Executive Board
+                      </span>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-semibold">
+                        5 Officers
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+                      {leaderPersonas
+                        .filter((p) => p.associatedClubId === 'club-msa')
+                        .map((persona) => (
+                          <button
+                            key={persona.userId}
+                            onClick={() => handleSelectPersona(persona)}
+                            className="text-left p-2.5 rounded-xl border border-emerald-100 hover:border-emerald-400 bg-white hover:bg-emerald-50/50 transition-all flex items-center justify-between group shadow-xs"
+                          >
+                            <div className="min-w-0 pr-1">
+                              <div className="text-xs font-bold text-slate-900 group-hover:text-emerald-900 truncate">
+                                {persona.name}
+                              </div>
+                              <div className="text-[11px] text-emerald-700 font-semibold truncate">
+                                {persona.title.replace('MSA ', '')}
+                              </div>
+                              <div className="text-[10px] text-slate-500 truncate">{persona.email}</div>
+                            </div>
+                            <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-600 flex-shrink-0" />
+                          </button>
+                        ))}
+                    </div>
                   </div>
                 </div>
 
