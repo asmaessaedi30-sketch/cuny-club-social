@@ -54,6 +54,10 @@ import {
   saveCustomEvent
 } from '../utils/schoolCalendarSync';
 import { campusDate, shiftCalendarDate } from '../utils/calendarDates';
+import { EcosystemUser, ecosystemStore } from '../data/ecosystemStore';
+import { DedicatedCalendarView } from './DedicatedCalendarView';
+import { StudentJoinClubModal } from './StudentJoinClubModal';
+import { ClubLeaderWorkspaceModal } from './ClubLeaderWorkspaceModal';
 
 // Recognizable Brand SVG Icons
 function WhatsAppIcon({ className = 'w-5 h-5' }: { className?: string }) {
@@ -96,11 +100,47 @@ function LinkedInIcon({ className = 'w-5 h-5' }: { className?: string }) {
   );
 }
 
-export function StudentDiscoveryApp() {
+export interface StudentDiscoveryAppProps {
+  currentUser?: EcosystemUser | null;
+  onOpenRoleModal?: () => void;
+  onOpenAdminPortal?: () => void;
+}
+
+export function StudentDiscoveryApp({
+  currentUser = null,
+  onOpenRoleModal,
+  onOpenAdminPortal,
+}: StudentDiscoveryAppProps) {
   // Navigation: 'home' | 'clubs' | 'events' | 'club-profile' | 'resources'
   const [currentTab, setCurrentTab] = useState<'home' | 'clubs' | 'events' | 'club-profile' | 'resources'>('home');
   const [selectedClubId, setSelectedClubId] = useState<string>('club-ai');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Ecosystem & Calendar View Modals / Toggles
+  const [homeCalendarView, setHomeCalendarView] = useState<'cards' | 'calendar'>('cards');
+  const [eventsCalendarView, setEventsCalendarView] = useState<'master-list' | 'calendar'>('master-list');
+  const [showJoinModal, setShowJoinModal] = useState(false);
+  const [joinTargetClub, setJoinTargetClub] = useState<ClubDiscoveryItem | null>(null);
+  const [showLeaderWorkspace, setShowLeaderWorkspace] = useState(false);
+  const [pendingRequestsCount, setPendingRequestsCount] = useState(0);
+
+  useEffect(() => {
+    const updateCount = () => {
+      const user = ecosystemStore.getCurrentUser();
+      if (user?.roleLayer === 'ADMIN') {
+        const budgets = ecosystemStore.getBudgetRequests().filter((b) => b.status === 'Submitted').length;
+        const joins = ecosystemStore.getJoinRequests().filter((j) => j.status === 'Pending').length;
+        setPendingRequestsCount(budgets + joins);
+      } else if (user?.roleLayer === 'LEADER') {
+        const joins = ecosystemStore.getJoinRequests(user.associatedClubId).filter((j) => j.status === 'Pending').length;
+        setPendingRequestsCount(joins);
+      } else {
+        setPendingRequestsCount(0);
+      }
+    };
+    updateCount();
+    return ecosystemStore.subscribe(updateCount);
+  }, [currentUser]);
 
   // Search & Filtering
   const [searchQuery, setSearchQuery] = useState('');
@@ -558,6 +598,70 @@ export function StudentDiscoveryApp() {
               </button>
             )}
 
+            {/* Institutional Access & Role Indicator */}
+            <div className="flex items-center gap-1.5 pl-1">
+              {!currentUser ? (
+                <button
+                  type="button"
+                  onClick={onOpenRoleModal}
+                  className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-800 text-xs font-bold border border-blue-200 transition-colors cursor-pointer shadow-2xs"
+                  title="Sign in with CUNY identity or switch roles"
+                >
+                  <Shield className="w-3.5 h-3.5 text-blue-600" />
+                  <span className="hidden xs:inline">Sign In / Roles</span>
+                  <span className="px-1.5 py-0.2 rounded text-[9px] font-black bg-blue-200 text-blue-900">Layer 1</span>
+                </button>
+              ) : currentUser.roleLayer === 'ADMIN' ? (
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={onOpenAdminPortal}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-extrabold shadow-sm transition-colors border border-amber-600 cursor-pointer animate-pulse"
+                    title="Enter Dedicated Admin Governance Portal"
+                  >
+                    <Shield className="w-3.5 h-3.5" />
+                    <span>Admin Portal</span>
+                    {pendingRequestsCount > 0 && (
+                      <span className="px-1.5 py-0.2 rounded-full text-[9px] font-black bg-slate-950 text-amber-300">
+                        {pendingRequestsCount}
+                      </span>
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={onOpenRoleModal}
+                    className="hidden xl:inline-block text-[11px] font-bold text-slate-600 hover:text-slate-900 px-1 py-1"
+                    title="Switch role"
+                  >
+                    {currentUser.name}
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setShowLeaderWorkspace(true)}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold border border-indigo-200 transition-colors cursor-pointer shadow-2xs"
+                    title={currentUser.roleLayer === 'LEADER' ? 'Open Club Leader Workspace' : 'Open Member Directory'}
+                  >
+                    <Users className="w-3.5 h-3.5 text-indigo-600" />
+                    <span>{currentUser.roleLayer === 'LEADER' ? 'Leader Tools' : 'Member Directory'}</span>
+                    {pendingRequestsCount > 0 && (
+                      <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={onOpenRoleModal}
+                    className="hidden xl:inline-block text-[11px] font-bold text-slate-600 hover:text-slate-900 px-1 py-1"
+                    title="Switch role"
+                  >
+                    {currentUser.name}
+                  </button>
+                </div>
+              )}
+            </div>
+
 
 
             {/* Official Student Networks on Desktop Header */}
@@ -812,15 +916,48 @@ export function StudentDiscoveryApp() {
                   <div className="bg-gradient-to-br from-[#0B0B0F] via-[#14141C] to-[#0B0B0F] rounded-3xl p-6 sm:p-8 text-white relative overflow-hidden shadow-xl border border-white/10">
                     <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
                       <div>
-                        <span className="text-xs font-bold uppercase tracking-wider text-[#C4F500]">
-                          Calendar Highlights
-                        </span>
+                        <div className="flex items-center gap-2 flex-wrap mb-1">
+                          <span className="text-xs font-bold uppercase tracking-wider text-[#C4F500]">
+                            Calendar Highlights
+                          </span>
+                          <span className="text-[11px] text-slate-400 font-mono">
+                            Midnight Rollover (EST)
+                          </span>
+                        </div>
                         <h2 className="text-xl sm:text-2xl font-bold text-white mt-1">Upcoming Campus Events</h2>
                         <p className="text-xs sm:text-sm text-slate-300 mt-0.5">
                           Open to all enrolled students. Times shown in New York campus time (EST).
                         </p>
                       </div>
-                      <div className="flex items-center gap-3 flex-wrap self-start sm:self-auto">
+
+                      <div className="flex items-center gap-2.5 flex-wrap self-start sm:self-auto">
+                        {/* Dedicated Calendar View Toggle */}
+                        <div className="flex items-center bg-white/10 rounded-xl p-1 border border-white/15 text-xs font-semibold">
+                          <button
+                            type="button"
+                            onClick={() => setHomeCalendarView('cards')}
+                            className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                              homeCalendarView === 'cards'
+                                ? 'bg-[#C4F500] text-slate-950 shadow-xs font-bold'
+                                : 'text-slate-300 hover:text-white'
+                            }`}
+                          >
+                            Upcoming Cards
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setHomeCalendarView('calendar')}
+                            className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
+                              homeCalendarView === 'calendar'
+                                ? 'bg-[#C4F500] text-slate-950 shadow-xs font-bold'
+                                : 'text-slate-300 hover:text-white'
+                            }`}
+                          >
+                            <Calendar className="w-3.5 h-3.5" />
+                            <span>Interactive Calendar View</span>
+                          </button>
+                        </div>
+
                         <button
                           type="button"
                           onClick={() => navigateTo('events')}
@@ -842,40 +979,50 @@ export function StudentDiscoveryApp() {
                       </div>
                     </div>
 
-                    <div className="space-y-3 sm:space-y-4">
-                      {upcomingPreviewEvents.map((ev) => (
-                        <div
-                          key={ev.eventId}
-                          className="bg-white/5 border border-white/10 rounded-2xl p-4 sm:p-5 flex flex-col justify-between hover:bg-white/10 transition-all"
-                        >
-                          <div>
-                            <div className="flex items-center justify-between text-xs text-[#C4F500] mb-2 font-mono">
-                              <span>{ev.date}</span>
-                              <span>{ev.time} EST</span>
+                    {homeCalendarView === 'calendar' ? (
+                      <div className="text-slate-900 animate-in fade-in duration-200">
+                        <DedicatedCalendarView
+                          events={allEvents}
+                          currentCampusDate={currentCampusDate}
+                          onSelectClub={(cId) => navigateTo('club-profile', cId)}
+                        />
+                      </div>
+                    ) : (
+                      <div className="space-y-3 sm:space-y-4">
+                        {upcomingPreviewEvents.map((ev) => (
+                          <div
+                            key={ev.eventId}
+                            className="bg-white/5 border border-white/10 rounded-2xl p-4 sm:p-5 flex flex-col justify-between hover:bg-white/10 transition-all"
+                          >
+                            <div>
+                              <div className="flex items-center justify-between text-xs text-[#C4F500] mb-2 font-mono">
+                                <span>{ev.date}</span>
+                                <span>{ev.time} EST</span>
+                              </div>
+                              <h4 className="font-bold text-white text-sm sm:text-base leading-snug">{ev.title}</h4>
+                              <p className="text-xs text-slate-300 mt-1">
+                                Hosted by {ev.clubName}
+                              </p>
+                              <div className="flex items-center gap-1.5 text-xs text-slate-300 mt-2">
+                                <MapPin className="w-3.5 h-3.5 text-[#C4F500] shrink-0" />
+                                <span>{ev.format} · {ev.location}</span>
+                              </div>
                             </div>
-                            <h4 className="font-bold text-white text-sm sm:text-base leading-snug">{ev.title}</h4>
-                            <p className="text-xs text-slate-300 mt-1">
-                              Hosted by {ev.clubName}
-                            </p>
-                            <div className="flex items-center gap-1.5 text-xs text-slate-300 mt-2">
-                              <MapPin className="w-3.5 h-3.5 text-[#C4F500] shrink-0" />
-                              <span>{ev.format} · {ev.location}</span>
-                            </div>
-                          </div>
 
-                          <div className="mt-3 pt-3 border-t border-white/5">
-                            <button
-                              type="button"
-                              onClick={() => navigateTo('club-profile', ev.clubId)}
-                              className="text-xs font-semibold text-[#C4F500] hover:underline flex items-center gap-1 cursor-pointer"
-                            >
-                              <span>View {ev.clubName.split(' ')[0]} Profile</span>
-                              <ArrowRight className="w-3.5 h-3.5" />
-                            </button>
+                            <div className="mt-3 pt-3 border-t border-white/5">
+                              <button
+                                type="button"
+                                onClick={() => navigateTo('club-profile', ev.clubId)}
+                                className="text-xs font-semibold text-[#C4F500] hover:underline flex items-center gap-1 cursor-pointer"
+                              >
+                                <span>View {ev.clubName.split(' ')[0]} Profile</span>
+                                <ArrowRight className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
                           </div>
-                        </div>
-                      ))}
-                    </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </section>
 
@@ -1278,15 +1425,29 @@ export function StudentDiscoveryApp() {
                           </div>
                         </div>
 
-                        {/* Primary "View club" Action */}
-                        <div className="mt-5 pt-2">
+                        {/* Primary "View club" & "Join Club" Action */}
+                        <div className="mt-5 pt-2 flex items-center gap-2">
                           <button
                             type="button"
                             onClick={() => navigateTo('club-profile', club.clubId)}
-                            className="w-full min-h-[44px] py-2.5 px-4 bg-[#0B0B0F] hover:bg-slate-800 text-white font-bold text-xs sm:text-sm rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer group"
+                            className="flex-1 min-h-[44px] py-2.5 px-3 bg-[#0B0B0F] hover:bg-slate-800 text-white font-bold text-xs sm:text-sm rounded-xl transition-all shadow-sm flex items-center justify-center gap-1.5 cursor-pointer group"
                           >
                             <span>View club</span>
                             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setJoinTargetClub(club);
+                              setShowJoinModal(true);
+                            }}
+                            className="min-h-[44px] py-2.5 px-3 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-xs rounded-xl border border-blue-200 transition-all flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
+                            title="Submit initial application to join this club"
+                          >
+                            <Users className="w-3.5 h-3.5 text-blue-600" />
+                            <span>Join Club</span>
                           </button>
                         </div>
                       </article>
@@ -1592,29 +1753,103 @@ export function StudentDiscoveryApp() {
                   )}
                 </div>
 
+                {/* Verified Club Members & Leadership Directory */}
+                <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200">
+                    <div>
+                      <h3 className="text-lg font-bold text-slate-900">
+                        Verified Club Members &amp; Leadership Directory
+                      </h3>
+                      <p className="text-xs text-slate-500">
+                        Official student officers and active members chartered under {selectedClub.name}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {currentUser ? (
+                        <button
+                          type="button"
+                          onClick={() => setShowLeaderWorkspace(true)}
+                          className="px-3.5 py-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer border border-indigo-200 shadow-2xs"
+                        >
+                          <Users className="w-3.5 h-3.5 text-indigo-600" />
+                          <span>{currentUser.roleLayer === 'LEADER' ? 'Manage Roster & Requests' : 'Member Directory'}</span>
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={onOpenRoleModal}
+                          className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                        >
+                          <Lock className="w-3.5 h-3.5 text-slate-500" />
+                          <span>Sign in to view full directory</span>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {ecosystemStore.getMembers(selectedClub.clubId).map((member) => (
+                      <div
+                        key={member.memberId}
+                        className="p-3.5 rounded-xl border border-slate-200 bg-slate-50/60 hover:bg-white hover:border-indigo-300 transition-all flex items-center justify-between gap-3 shadow-2xs"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-9 h-9 rounded-full bg-indigo-100 text-indigo-800 font-bold flex items-center justify-center text-xs">
+                            {member.name.split(' ').map((n) => n[0]).join('')}
+                          </div>
+                          <div>
+                            <div className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                              <span>{member.name}</span>
+                              {member.role.includes('President') || member.role.includes('Chair') ? (
+                                <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-amber-100 text-amber-800 border border-amber-300">
+                                  Lead
+                                </span>
+                              ) : null}
+                            </div>
+                            <div className="text-[11px] text-indigo-600 font-medium">{member.role}</div>
+                            <div className="text-[10px] text-slate-500">{member.major}</div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
                 {/* Official School Join & Inquiry Form */}
                 <div className="bg-gradient-to-br from-[#0B0B0F] via-[#14141C] to-[#0B0B0F] rounded-3xl p-6 sm:p-8 text-white space-y-5 border border-white/10 shadow-xl relative overflow-hidden">
                   <div className="max-w-2xl space-y-2">
                     <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-white/10 text-[#C4F500] text-[11px] font-bold tracking-wide uppercase">
                       <Shield className="w-3.5 h-3.5 text-[#C4F500]" />
-                      <span>Official School Form</span>
+                      <span>In-App Membership &amp; Official School Forms</span>
                     </div>
                     <h3 className="text-xl sm:text-2xl font-bold text-white">
                       Have a question or want to join {selectedClub.name}?
                     </h3>
                     <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                      Submit your student inquiry or membership request directly through the official CUNY SPS Student Life form. Your submission is routed directly to the Office of Student Life and club leadership.
+                      Submit your student membership application directly through our in-app request flow, or explore the external CUNY SPS Student Life form.
                     </p>
                   </div>
 
                   <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-1">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setJoinTargetClub(selectedClub);
+                        setShowJoinModal(true);
+                      }}
+                      className="px-6 py-3.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm rounded-xl transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      <Users className="w-4 h-4" />
+                      <span>Request to Join {selectedClub.name} (In-App)</span>
+                    </button>
+
                     <a
                       href={selectedClub.joinUrl || "https://sps.cuny.edu/student-success/student-life/student-clubs-and-organizations"}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="px-6 py-3.5 bg-[#C4F500] hover:bg-[#b8e800] text-slate-950 font-bold text-xs sm:text-sm rounded-xl transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 group cursor-pointer"
                     >
-                      <span>Open Official {selectedClub.name} Form</span>
+                      <span>Open External Form</span>
                       <ExternalLink className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                     </a>
 
@@ -1749,6 +1984,52 @@ export function StudentDiscoveryApp() {
                   </div>
                 </div>
 
+                {/* Events Format & View Mode Toggle: Master Discovery vs Dedicated Calendar View */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-slate-50 border border-slate-200 rounded-2xl">
+                  <div>
+                    <h3 className="text-sm font-bold text-slate-900">Events Display Format</h3>
+                    <p className="text-xs text-slate-500">
+                      Explore events across all 34 clubs via the unified card catalog or the interactive calendar grid.
+                    </p>
+                  </div>
+
+                  <div className="flex items-center bg-slate-200/80 p-1 rounded-xl border border-slate-300 text-xs font-semibold self-start sm:self-auto">
+                    <button
+                      type="button"
+                      onClick={() => setEventsCalendarView('master-list')}
+                      className={`px-3.5 py-2 rounded-lg transition-all cursor-pointer ${
+                        eventsCalendarView === 'master-list'
+                          ? 'bg-[#0B0B0F] text-[#C4F500] shadow-sm font-bold'
+                          : 'text-slate-700 hover:text-black'
+                      }`}
+                    >
+                      Master Event Discovery
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEventsCalendarView('calendar')}
+                      className={`px-3.5 py-2 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
+                        eventsCalendarView === 'calendar'
+                          ? 'bg-[#0B0B0F] text-[#C4F500] shadow-sm font-bold'
+                          : 'text-slate-700 hover:text-black'
+                      }`}
+                    >
+                      <Calendar className="w-3.5 h-3.5" />
+                      <span>Dedicated Calendar View</span>
+                    </button>
+                  </div>
+                </div>
+
+                {eventsCalendarView === 'calendar' ? (
+                  <div className="animate-in fade-in duration-200">
+                    <DedicatedCalendarView
+                      events={allEvents}
+                      currentCampusDate={currentCampusDate}
+                      onSelectClub={(cId) => navigateTo('club-profile', cId)}
+                    />
+                  </div>
+                ) : (
+                  <>
                 {/* Event Search & Filter Tabs */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div className="relative flex-1 max-w-md">
@@ -2061,6 +2342,8 @@ export function StudentDiscoveryApp() {
                     </div>
                   )}
                 </div>
+                  </>
+                )}
               </div>
             )}
 
@@ -2358,6 +2641,55 @@ export function StudentDiscoveryApp() {
 
             {/* Drawer Navigation Links */}
             <div className="p-4 space-y-6 flex-1">
+              {/* Role / Session Box */}
+              <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Access Layer</span>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-800">
+                    {currentUser ? `Layer ${currentUser.roleLayer === 'ADMIN' ? '3' : '2'}` : 'Layer 1: Public'}
+                  </span>
+                </div>
+                <div className="text-xs font-bold text-slate-900">
+                  {currentUser ? currentUser.name : 'Public Student / Visitor'}
+                </div>
+                {currentUser?.roleLayer === 'ADMIN' && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      onOpenAdminPortal?.();
+                    }}
+                    className="w-full py-2 px-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs rounded-lg flex items-center justify-center gap-1.5 shadow-2xs"
+                  >
+                    <Shield className="w-3.5 h-3.5" />
+                    <span>Open Admin Portal</span>
+                  </button>
+                )}
+                {currentUser && currentUser.roleLayer !== 'ADMIN' && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      setShowLeaderWorkspace(true);
+                    }}
+                    className="w-full py-2 px-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-lg flex items-center justify-center gap-1.5 shadow-2xs"
+                  >
+                    <Users className="w-3.5 h-3.5" />
+                    <span>{currentUser.roleLayer === 'LEADER' ? 'Leader Workspace' : 'Member Directory'}</span>
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    onOpenRoleModal?.();
+                  }}
+                  className="w-full py-1.5 px-3 border border-slate-300 hover:bg-slate-100 text-slate-700 text-xs font-semibold rounded-lg text-center"
+                >
+                  {currentUser ? 'Switch Role' : 'Sign In with CUNY SPS Identity'}
+                </button>
+              </div>
+
               {/* Sections Group */}
               <div className="space-y-1.5">
                 <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider px-2">
@@ -2829,6 +3161,27 @@ export function StudentDiscoveryApp() {
             <X className="w-4 h-4" />
           </button>
         </div>
+      )}
+
+      {/* In-App Membership Application Modal */}
+      <StudentJoinClubModal
+        isOpen={showJoinModal}
+        onClose={() => {
+          setShowJoinModal(false);
+          setJoinTargetClub(null);
+        }}
+        club={joinTargetClub}
+        currentUser={currentUser}
+      />
+
+      {/* Layer 2: Authenticated Club Leader / Member Workspace Modal */}
+      {currentUser && (
+        <ClubLeaderWorkspaceModal
+          isOpen={showLeaderWorkspace}
+          onClose={() => setShowLeaderWorkspace(false)}
+          currentUser={currentUser}
+          onAddEventClick={() => setShowAddEventModal(true)}
+        />
       )}
     </div>
   );
